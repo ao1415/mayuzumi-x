@@ -101,8 +101,8 @@ void movie(LiveData& liveData, const Audio& audio) {
 	while (System::Update()) {
 		const auto ms = sw.ms() - 2 * 1000;
 		if (ms >= inc * dtime + inc / 3) {
-			const int begin = static_cast<int>(liveList.size()) * (inc + 0) / (76 * 3);
-			const int end = static_cast<int>(liveList.size()) * (inc + 1) / (76 * 3);
+			const int begin = static_cast<int>(liveList.size()) * (inc + 0) / (78 * 3);
+			const int end = static_cast<int>(liveList.size()) * (inc + 1) / (78 * 3);
 
 			ClearPrint();
 			if (begin < liveList.size()) {
