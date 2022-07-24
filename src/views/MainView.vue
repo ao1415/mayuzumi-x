@@ -5,7 +5,7 @@
         <div :class="{ 'flex-grow-1': !breakpoint, 'live-video': breakpoint }">
           <div class="ratio ratio-16x9" :class="{ 'h-100': breakpoint }">
             <video class="" controls>
-              <source src="/MayuzumiX.mp4" />
+              <source src="MayuzumiX.mp4" />
             </video>
           </div>
         </div>
