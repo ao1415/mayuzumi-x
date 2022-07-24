@@ -9,7 +9,9 @@
       </thead>
       <tbody>
         <tr v-for="(data, index) in liveList" :key="index">
-          <td>{{ data.date }}</td>
+          <td>
+            <span>{{ data.date }}</span>
+          </td>
           <td v-if="Array.isArray(data.id)">
             <div v-for="index in data.id.length" :key="index" class="d-flex">
               <div class="flex-grow-1">
@@ -23,6 +25,7 @@
                 >
               </div>
               <div
+                class="d-flex align-items-center"
                 :class="{
                   'mb-1': index == 1,
                   'my-1': index != 1 && index != data.id.length,
@@ -50,7 +53,7 @@
                   >{{ data.title }}</a
                 >
               </div>
-              <div>
+              <div class="d-flex align-items-center">
                 <button
                   class="btn btn-outline-light btn-sm text-nowrap"
                   @click.left="show(data.platform, data.id)"
@@ -66,7 +69,7 @@
   </div>
 
   <Teleport to="body">
-    <div class="modal" tabindex="-1" ref="BootModal">
+    <div class="modal" tabindex="-1" ref="MovieModal">
       <div class="modal-dialog modal-xl">
         <div class="modal-content border-0">
           <div class="modal-header modal-header-dark">
@@ -146,15 +149,15 @@ export default defineComponent({
       }
     });
 
-    const BootModal = ref<HTMLElement>();
+    const MovieModal = ref<HTMLElement>();
     const myModal = ref<Modal>();
     const selectedPlatform = ref<PlatformType>("");
     const selectedId = ref<string>("");
 
     onMounted(() => {
-      if (BootModal.value) {
-        myModal.value = new Modal(BootModal.value);
-        BootModal.value.addEventListener("hide.bs.modal", () => {
+      if (MovieModal.value) {
+        myModal.value = new Modal(MovieModal.value);
+        MovieModal.value.addEventListener("hide.bs.modal", () => {
           selectedId.value = "";
         });
       }
@@ -207,7 +210,7 @@ export default defineComponent({
 
     return {
       liveList,
-      BootModal,
+      MovieModal: MovieModal,
       myModal,
       selectedPlatform,
       selectedId,
