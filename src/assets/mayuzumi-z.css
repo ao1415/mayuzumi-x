@@ -1,0 +1,11 @@
+@font-face {
+  font-family: "x12y16pxMaruMonica";
+  src: url("/public/x12y16pxMaruMonica.ttf");
+}
+* {
+  font-family: "x12y16pxMaruMonica", "Courier New", "Courier", "monospace";
+}
+
+.simplebar-scrollbar::before {
+  background-color: white;
+}
