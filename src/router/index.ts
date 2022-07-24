@@ -6,7 +6,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/MainView.vue"),
   },
   {
-    path: "/mayuzumi-x/*",
+    path: "/mayuzumi-x",
     component: () => import("../views/MainView.vue"),
   },
 ];
