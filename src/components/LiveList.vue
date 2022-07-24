@@ -5,46 +5,60 @@
         <tr>
           <th>日付</th>
           <th>タイトル</th>
-          <th></th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(data, index) in liveList" :key="index">
           <td>{{ data.date }}</td>
           <td v-if="Array.isArray(data.id)">
-            <div v-for="index in data.id.length" :key="index">
-              <a
-                class="text-reset"
-                :href="getLink(data.platform, data.id[index - 1])"
-                target="_blank"
-                rel="noopener noreferrer"
-                @click.stop=""
-                >{{ data.title[index - 1] }}</a
+            <div v-for="index in data.id.length" :key="index" class="d-flex">
+              <div class="flex-grow-1">
+                <a
+                  class="text-reset"
+                  :href="getLink(data.platform, data.id[index - 1])"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  @click.stop=""
+                  >{{ data.title[index - 1] }}</a
+                >
+              </div>
+              <div
+                :class="{
+                  'mb-1': index == 1,
+                  'my-1': index != 1 && index != data.id.length,
+                  'mt-1': index == data.id.length,
+                }"
               >
+                <button
+                  class="btn btn-outline-light btn-sm text-nowrap"
+                  @click.left="show(data.platform, data.id[index - 1])"
+                >
+                  表示
+                </button>
+              </div>
             </div>
           </td>
           <td v-else>
-            <a
-              class="text-reset"
-              :href="getLink(data.platform, data.id)"
-              target="_blank"
-              rel="noopener noreferrer"
-              @click.stop=""
-              >{{ data.title }}</a
-            >
-          </td>
-          <td>
-            <button
-              class="btn btn-outline-light btn-sm text-nowrap"
-              @click.left="
-                show(
-                  data.platform,
-                  Array.isArray(data.id) ? data.id[0] : data.id
-                )
-              "
-            >
-              表示
-            </button>
+            <div class="d-flex">
+              <div class="flex-grow-1">
+                <a
+                  class="text-reset"
+                  :href="getLink(data.platform, data.id)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  @click.stop=""
+                  >{{ data.title }}</a
+                >
+              </div>
+              <div>
+                <button
+                  class="btn btn-outline-light btn-sm text-nowrap"
+                  @click.left="show(data.platform, data.id)"
+                >
+                  表示
+                </button>
+              </div>
+            </div>
           </td>
         </tr>
       </tbody>

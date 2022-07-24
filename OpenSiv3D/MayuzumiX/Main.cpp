@@ -99,7 +99,7 @@ void movie(LiveData& liveData, const Audio& audio) {
 
 	audio.play();
 	while (System::Update()) {
-		const auto ms = sw.ms() - 4 * 1000;
+		const auto ms = sw.ms() - 2 * 1000;
 		if (ms >= inc * dtime + inc / 3) {
 			const int begin = static_cast<int>(liveList.size()) * (inc + 0) / (76 * 3);
 			const int end = static_cast<int>(liveList.size()) * (inc + 1) / (76 * 3);

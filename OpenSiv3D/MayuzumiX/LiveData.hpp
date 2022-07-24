@@ -70,7 +70,7 @@ private:
 				const int rMax = static_cast<int>(length / (IconSize * 1.5));
 
 				const double dd = Math::TwoPi / rMax;
-				const double d = dd * index + (Math::Pi * (rIndex - 1) * 3 / 180);
+				const double d = dd * index - (Math::Pi * (rIndex - 1) * 3 / 180);
 				const int x = static_cast<int>(Math::Cos(d) * r * 1.20 + Scene::Center().x);
 				const int y = static_cast<int>(Math::Sin(d) * r * 1.00 + Scene::Center().y);
 
