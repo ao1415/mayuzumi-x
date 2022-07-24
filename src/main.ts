@@ -10,6 +10,9 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "simplebar";
 import "simplebar/dist/simplebar.css";
 
+import "video.js";
+import "video.js/dist/video-js.css";
+
 import "./assets/mayuzumi-z.css";
 
 createApp(App).use(store).use(router).mount("#app");

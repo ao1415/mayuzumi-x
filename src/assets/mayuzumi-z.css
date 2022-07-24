@@ -9,3 +9,25 @@
 .simplebar-scrollbar::before {
   background-color: white;
 }
+
+.vjs-remaining-time {
+  display: none;
+}
+.video-js .vjs-current-time,
+.vjs-no-flex .vjs-current-time {
+  display: block;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.video-js .vjs-duration,
+.vjs-no-flex .vjs-duration {
+  display: block;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.vjs-time-control.vjs-time-divider {
+  display: block;
+  text-align: center;
+  padding-left: 0px;
+  padding-right: 0px;
+}
