@@ -33,8 +33,10 @@
                 }"
               >
                 <button
-                  class="btn btn-outline-light btn-sm text-nowrap"
-                  @click.left="show(data.platform, data.id[index - 1])"
+                  class="btn btn-outline-light btn-sm text-nowrap play-icon"
+                  @click.left="
+                    showMovieModal(data.platform, data.id[index - 1])
+                  "
                 >
                   表示
                 </button>
@@ -55,8 +57,8 @@
               </div>
               <div class="d-flex align-items-center">
                 <button
-                  class="btn btn-outline-light btn-sm text-nowrap"
-                  @click.left="show(data.platform, data.id)"
+                  class="btn btn-outline-light btn-sm text-nowrap play-icon"
+                  @click.left="showMovieModal(data.platform, data.id)"
                 >
                   表示
                 </button>
@@ -67,62 +69,46 @@
       </tbody>
     </table>
   </div>
-
-  <Teleport to="body">
-    <div class="modal" tabindex="-1" ref="MovieModal">
-      <div class="modal-dialog modal-xl">
-        <div class="modal-content border-0">
-          <div class="modal-header modal-header-dark">
-            <h5 class="modal-title"></h5>
-            <button
-              type="button"
-              class="btn-close btn-close-white"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body p-0">
-            <div class="ratio ratio-16x9">
-              <!-- youtube -->
-              <iframe
-                v-if="selectedPlatform == 'youtube'"
-                class="w-100 h-100 border-0"
-                :src="liveUrl"
-                title="YouTube video player"
-              ></iframe>
-              <!-- niconico -->
-              <iframe
-                v-if="selectedPlatform == 'nicovideo'"
-                class="w-100 h-100 border-0"
-                :src="liveUrl"
-                title="niconico video player"
-              ></iframe>
-              <!-- twitcasting -->
-              <iframe
-                v-if="selectedPlatform == 'twitcasting'"
-                class="w-100 h-100 border-0"
-                :src="liveUrl"
-                title="twitcas video player"
-              ></iframe>
-              <!-- bilibili -->
-              <iframe
-                v-if="selectedPlatform == 'bilibili'"
-                class="w-100 h-100 border-0"
-                :src="liveUrl"
-                title="bilibili video player"
-              >
-              </iframe>
-            </div>
-          </div>
-        </div>
-      </div>
+  <BootModalVue ref="MovieModal">
+    <div class="ratio ratio-16x9">
+      <!-- youtube -->
+      <iframe
+        v-if="selectedPlatform == 'youtube'"
+        class="w-100 h-100 border-0"
+        :src="liveUrl"
+        title="YouTube video player"
+      ></iframe>
+      <!-- niconico -->
+      <iframe
+        v-if="selectedPlatform == 'nicovideo'"
+        class="w-100 h-100 border-0"
+        :src="liveUrl"
+        title="niconico video player"
+      ></iframe>
+      <!-- twitcasting -->
+      <iframe
+        v-if="selectedPlatform == 'twitcasting'"
+        class="w-100 h-100 border-0"
+        :src="liveUrl"
+        title="twitcas video player"
+      ></iframe>
+      <!-- bilibili -->
+      <iframe
+        v-if="selectedPlatform == 'bilibili'"
+        class="w-100 h-100 border-0"
+        :src="liveUrl"
+        title="bilibili video player"
+      >
+      </iframe>
     </div>
-  </Teleport>
+  </BootModalVue>
+
+  <BootModalVue></BootModalVue>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
-import { Modal } from "bootstrap";
+import { computed, defineComponent, ref } from "vue";
+import BootModalVue from "@/components/BootModal.vue";
 
 type PlatformType = "" | "youtube" | "nicovideo" | "twitcasting" | "bilibili";
 type LiveJson = {
@@ -135,6 +121,10 @@ type LiveJson = {
 
 export default defineComponent({
   name: "LiveList",
+
+  components: {
+    BootModalVue,
+  },
 
   setup() {
     const liveList = ref<LiveJson>([]);
@@ -149,23 +139,8 @@ export default defineComponent({
       }
     });
 
-    const MovieModal = ref<HTMLElement>();
-    const myModal = ref<Modal>();
     const selectedPlatform = ref<PlatformType>("");
     const selectedId = ref<string>("");
-
-    onMounted(() => {
-      if (MovieModal.value) {
-        myModal.value = new Modal(MovieModal.value);
-        MovieModal.value.addEventListener("hide.bs.modal", () => {
-          selectedId.value = "";
-        });
-      }
-    });
-
-    onUnmounted(() => {
-      myModal.value?.dispose();
-    });
 
     const liveUrl = computed(() => {
       switch (selectedPlatform.value) {
@@ -210,8 +185,6 @@ export default defineComponent({
 
     return {
       liveList,
-      MovieModal: MovieModal,
-      myModal,
       selectedPlatform,
       selectedId,
       liveUrl,
@@ -220,15 +193,19 @@ export default defineComponent({
   },
 
   methods: {
-    show(platform: PlatformType, id: string) {
+    showMovieModal(platform: PlatformType, id: string) {
       this.selectedPlatform = platform;
       this.selectedId = id;
-      this.myModal?.show();
+
+      const modal = this.$refs.MovieModal as InstanceType<typeof BootModalVue>;
+      modal.show();
     },
-    hide() {
-      this.myModal?.hide();
+    hideMovieModal() {
       this.selectedPlatform = "";
       this.selectedId = "";
+
+      const modal = this.$refs.MovieModal as InstanceType<typeof BootModalVue>;
+      modal.hide();
     },
   },
 });
@@ -237,9 +214,5 @@ export default defineComponent({
 <style scoped>
 .table {
   width: calc(100% - 11px);
-}
-.modal-header-dark {
-  background-color: #2c3034;
-  border-bottom: none;
 }
 </style>
