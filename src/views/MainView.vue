@@ -1,7 +1,7 @@
 <template>
-  <div class="main vh-100 text-white bg-dark">
+  <div class="main js-vh-100 text-white bg-dark">
     <div class="container-fluid">
-      <div class="d-flex vh-100" :class="{ 'flex-column': breakpoint }">
+      <div class="d-flex js-vh-100" :class="{ 'flex-column': breakpoint }">
         <div :class="{ 'flex-grow-1': !breakpoint, 'live-video': breakpoint }">
           <div class="ratio ratio-16x9" :class="{ 'h-100': breakpoint }">
             <div class="overflow-hidden">
