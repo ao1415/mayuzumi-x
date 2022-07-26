@@ -1,74 +1,83 @@
 <template>
-  <div ref="LiveTable">
-    <table class="table table-dark table-striped table-hover mb-0">
-      <thead>
-        <tr>
-          <th>日付</th>
-          <th>タイトル</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(data, index) in liveList" :key="index">
-          <td>
-            <span>{{ data.date }}</span>
-          </td>
-          <td v-if="Array.isArray(data.id)">
-            <div v-for="index in data.id.length" :key="index" class="d-flex">
-              <div class="flex-grow-1">
-                <a
-                  class="text-reset"
-                  :href="getLink(data.platform, data.id[index - 1])"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  @click.stop=""
-                  >{{ data.title[index - 1] }}</a
+  <div class="h-100 position-relative">
+    <SimpleScrollVue>
+      <table class="table table-dark table-striped table-hover mb-0">
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>タイトル</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(data, index) in liveList" :key="index">
+            <td>
+              <span>{{ data.date }}</span>
+            </td>
+            <td v-if="Array.isArray(data.id)">
+              <div v-for="index in data.id.length" :key="index" class="d-flex">
+                <div class="flex-grow-1">
+                  <a
+                    class="text-reset"
+                    :href="getLink(data.platform, data.id[index - 1])"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    @click.stop=""
+                    >{{ data.title[index - 1] }}</a
+                  >
+                </div>
+                <div
+                  class="d-flex align-items-center"
+                  :class="{
+                    'mb-1': index == 1,
+                    'my-1': index != 1 && index != data.id.length,
+                    'mt-1': index == data.id.length,
+                  }"
                 >
+                  <button
+                    class="btn btn-outline-light btn-sm text-nowrap play-icon"
+                    @click.left="
+                      showMovieModal(data.platform, data.id[index - 1])
+                    "
+                  >
+                    表示
+                  </button>
+                </div>
               </div>
-              <div
-                class="d-flex align-items-center"
-                :class="{
-                  'mb-1': index == 1,
-                  'my-1': index != 1 && index != data.id.length,
-                  'mt-1': index == data.id.length,
-                }"
-              >
-                <button
-                  class="btn btn-outline-light btn-sm text-nowrap play-icon"
-                  @click.left="
-                    showMovieModal(data.platform, data.id[index - 1])
-                  "
-                >
-                  表示
-                </button>
+            </td>
+            <td v-else>
+              <div class="d-flex">
+                <div class="flex-grow-1">
+                  <a
+                    class="text-reset"
+                    :href="getLink(data.platform, data.id)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    @click.stop=""
+                    >{{ data.title }}</a
+                  >
+                </div>
+                <div class="d-flex align-items-center">
+                  <button
+                    v-if="data.id != ''"
+                    class="btn btn-outline-light btn-sm text-nowrap play-icon"
+                    @click.left="showMovieModal(data.platform, data.id)"
+                  >
+                    表示
+                  </button>
+                </div>
               </div>
-            </div>
-          </td>
-          <td v-else>
-            <div class="d-flex">
-              <div class="flex-grow-1">
-                <a
-                  class="text-reset"
-                  :href="getLink(data.platform, data.id)"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  @click.stop=""
-                  >{{ data.title }}</a
-                >
-              </div>
-              <div class="d-flex align-items-center">
-                <button
-                  class="btn btn-outline-light btn-sm text-nowrap play-icon"
-                  @click.left="showMovieModal(data.platform, data.id)"
-                >
-                  表示
-                </button>
-              </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </SimpleScrollVue>
+    <div class="position-absolute bottom-0 start-0 lh-1 ps-3 pb-3 d-none">
+      <button class="btn btn-outline-light rounded-circle p-0 border-2 filter">
+        <i class="bi bi-filter"></i>
+      </button>
+    </div>
   </div>
+
   <BootModalVue ref="MovieModal">
     <div class="ratio ratio-16x9">
       <!-- youtube -->
@@ -109,6 +118,7 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import BootModalVue from "@/components/BootModal.vue";
+import SimpleScrollVue from "@/components/SimpleScroll.vue";
 
 type PlatformType = "" | "youtube" | "nicovideo" | "twitcasting" | "bilibili";
 type LiveJson = {
@@ -124,20 +134,12 @@ export default defineComponent({
 
   components: {
     BootModalVue,
+    SimpleScrollVue,
   },
 
   setup() {
     const liveList = ref<LiveJson>([]);
     liveList.value = require("@/assets/live.json");
-    liveList.value.sort((a, b) => {
-      if (a.date < b.date) {
-        return -1;
-      } else if (b.date < a.date) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
 
     const selectedPlatform = ref<PlatformType>("");
     const selectedId = ref<string>("");
@@ -214,5 +216,15 @@ export default defineComponent({
 <style scoped>
 .table {
   width: calc(100% - 11px);
+}
+tr {
+  height: 3em;
+}
+.filter {
+  width: 3em;
+  height: 3em;
+}
+.filter > i {
+  font-size: 2em;
 }
 </style>
