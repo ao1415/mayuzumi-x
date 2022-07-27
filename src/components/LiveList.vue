@@ -9,7 +9,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(data, index) in liveList" :key="index">
+          <tr
+            v-for="(data, index) in liveList"
+            :key="index"
+            v-show="filter(data.members)"
+          >
             <td>
               <span>{{ data.date }}</span>
             </td>
@@ -71,8 +75,11 @@
         </tbody>
       </table>
     </SimpleScrollVue>
-    <div class="position-absolute bottom-0 start-0 lh-1 ps-3 pb-3 d-none">
-      <button class="btn btn-outline-light rounded-circle p-0 border-2 filter">
+    <div class="position-absolute bottom-0 start-0 lh-1 ps-3 pb-3">
+      <button
+        class="btn btn-outline-light rounded-circle p-0 border-2 filter"
+        @click="showFilterModal"
+      >
         <i class="bi bi-filter"></i>
       </button>
     </div>
@@ -112,13 +119,22 @@
     </div>
   </BootModalVue>
 
-  <BootModalVue></BootModalVue>
+  <BootModalVue ref="FilterModal">
+    <div class="p-3 bg-dark text-white">
+      <SearchModalVue
+        :all-member="members"
+        @set-filter-member="setFilterMember"
+        @set-filter-search="setFilterSearch"
+      ></SearchModalVue>
+    </div>
+  </BootModalVue>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import BootModalVue from "@/components/BootModal.vue";
 import SimpleScrollVue from "@/components/SimpleScroll.vue";
+import SearchModalVue from "@/components/SearchModal.vue";
 
 type PlatformType = "" | "youtube" | "nicovideo" | "twitcasting" | "bilibili";
 type LiveJson = {
@@ -128,6 +144,7 @@ type LiveJson = {
   title: string;
   members: string[];
 }[];
+type FilterType = { names: string[]; checked: boolean };
 
 export default defineComponent({
   name: "LiveList",
@@ -135,11 +152,21 @@ export default defineComponent({
   components: {
     BootModalVue,
     SimpleScrollVue,
+    SearchModalVue,
   },
 
   setup() {
     const liveList = ref<LiveJson>([]);
     liveList.value = require("@/assets/live.json");
+
+    const members = ref<string[]>([]);
+    for (const live of liveList.value) {
+      for (const mem of live.members) {
+        members.value.push(mem);
+      }
+    }
+    const filterMembers = ref(new Set(members.value));
+    members.value = Array.from(filterMembers.value).sort();
 
     const selectedPlatform = ref<PlatformType>("");
     const selectedId = ref<string>("");
@@ -187,10 +214,18 @@ export default defineComponent({
 
     return {
       liveList,
+      members,
+      filterMembers,
       selectedPlatform,
       selectedId,
       liveUrl,
       getLink,
+    };
+  },
+
+  data() {
+    return {
+      isOrSearch: true,
     };
   },
 
@@ -202,12 +237,42 @@ export default defineComponent({
       const modal = this.$refs.MovieModal as InstanceType<typeof BootModalVue>;
       modal.show();
     },
-    hideMovieModal() {
-      this.selectedPlatform = "";
-      this.selectedId = "";
 
-      const modal = this.$refs.MovieModal as InstanceType<typeof BootModalVue>;
-      modal.hide();
+    showFilterModal() {
+      const modal = this.$refs.FilterModal as InstanceType<typeof BootModalVue>;
+      modal.show();
+    },
+
+    setFilterMember(members: FilterType[]) {
+      const data: string[] = [];
+      for (const mem of members) {
+        if (mem.checked) {
+          data.push(mem.names[0]);
+        }
+      }
+
+      this.filterMembers = new Set(data);
+    },
+    setFilterSearch(isOrSearch: boolean) {
+      this.isOrSearch = isOrSearch;
+    },
+
+    filter(members: string[]) {
+      if (this.isOrSearch) {
+        for (const name of members) {
+          if (this.filterMembers.has(name)) {
+            return true;
+          }
+        }
+        return false;
+      } else {
+        for (const mem of this.filterMembers) {
+          if (!members.find((elem) => elem == mem)) {
+            return false;
+          }
+        }
+        return true;
+      }
     },
   },
 });
