@@ -55,6 +55,7 @@
         <div class="col-auto">
           <label class="visually-hidden" for="search-keyword">配信者</label>
           <div class="input-group search-text">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
             <input
               type="text"
               class="form-control"
@@ -62,8 +63,12 @@
               placeholder="配信者"
               v-model="keyword"
             />
-            <button class="btn btn-primary" type="button">
-              <i class="bi bi-search"></i>
+            <button
+              class="btn btn-secondary"
+              type="button"
+              @click="deleteFilter"
+            >
+              <i class="bi bi-x-lg"></i>
             </button>
           </div>
         </div>
@@ -119,14 +124,27 @@ export default defineComponent({
   },
 
   setup(props) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const members = require("@/assets/members.json") as {
+      name: string;
+      keyword: string[];
+    }[];
+
     const memberList = ref<FilterType[]>([]);
 
     if (props.allMember != null) {
       for (const mem of props.allMember) {
-        memberList.value.push({
+        const data = {
           names: [mem],
           checked: true,
-        });
+        };
+        const find = members.find((elem) => elem.name == mem)?.keyword;
+        if (find != null) {
+          for (const m of find) {
+            data.names.push(m);
+          }
+        }
+        memberList.value.push(data);
       }
     }
 
@@ -179,6 +197,9 @@ export default defineComponent({
         }
       }
       return false;
+    },
+    deleteFilter() {
+      this.keyword = "";
     },
   },
 });
